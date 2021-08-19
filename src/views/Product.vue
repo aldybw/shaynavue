@@ -28,11 +28,7 @@
                   <img class="product-big-img" :src="gambar_default" alt="" />
                 </div>
                 <div class="product-thumbs">
-                  <carousel
-                    class="product-thumbs-track ps-slider"
-                    :dots="true"
-                    :nav="false"
-                  >
+                  <carousel class="product-thumbs-track ps-slider" :nav="false">
                     <div
                       class="pt"
                       @click="changeImage(thumbs[0])"
