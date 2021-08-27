@@ -55,14 +55,21 @@
                     <h4>${{ productDetails.price }}</h4>
                   </div>
                   <div class="quantity">
-                    <!-- <router-link to="/cart" -->
-                    <a
-                      @click="saveKeranjang(productDetails.id)"
-                      href="#"
-                      class="primary-btn pd-cart"
-                      >Add To Cart</a
-                    >
-                    <!-- </router-link -->
+                    <router-link to="/cart">
+                      <a
+                        @click="
+                          saveKeranjang(
+                            productDetails.id,
+                            productDetails.name,
+                            productDetails.price,
+                            gambar_default
+                          )
+                        "
+                        href="#"
+                        class="primary-btn pd-cart"
+                        >Add To Cart</a
+                      >
+                    </router-link>
                   </div>
                 </div>
               </div>
@@ -113,12 +120,18 @@ export default {
       this.productDetails = data;
       // replace value gambar default dengan data dari API (product_galleries)
       var dataPicture = data.product_galleries;
-      dataPicture.forEach((defaultPic) => {
-        if (defaultPic.is_default) this.gambar_default = defaultPic.photo;
+      dataPicture.forEach((picture) => {
+        if (picture.is_default) this.gambar_default = picture.photo;
       });
     },
-    saveKeranjang(idProduct) {
-      this.keranjangUser.push(idProduct);
+    saveKeranjang(idProduct, nameProduct, priceProduct, photoProduct) {
+      var productStored = {
+        id: idProduct,
+        name: nameProduct,
+        price: priceProduct,
+        photo: photoProduct,
+      };
+      this.keranjangUser.push(productStored);
       const parsed = JSON.stringify(this.keranjangUser);
       localStorage.setItem("keranjangUser", parsed);
     },
@@ -151,5 +164,15 @@ export default {
 
 .ps-slider .pt {
   margin: 0 5px;
+}
+
+.product-big-img {
+  height: 650px;
+  object-fit: cover;
+}
+
+.pt img {
+  height: 270px;
+  object-fit: cover;
 }
 </style>

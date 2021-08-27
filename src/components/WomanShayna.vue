@@ -16,18 +16,26 @@
               v-for="itemProduct in products"
               :key="itemProduct.id"
             >
-              <div class="pi-pic">
-                <img
-                  v-for="product_gallery in itemProduct.product_galleries"
-                  :src="
-                    product_gallery.is_default == 1 ? product_gallery.photo : ''
-                  "
-                  :key="product_gallery.id"
-                  alt=""
-                />
+              <div
+                class="pi-pic"
+                v-for="picture in itemProduct.product_galleries"
+                :key="picture.id"
+              >
+                <img v-if="picture.is_default" :src="picture.photo" alt="" />
                 <ul>
                   <li class="w-icon active">
-                    <a href="#"><i class="icon_bag_alt"></i></a>
+                    <a
+                      href="#"
+                      @click="
+                        saveKeranjang(
+                          itemProduct.id,
+                          itemProduct.name,
+                          itemProduct.price,
+                          picture.photo
+                        )
+                      "
+                      ><i class="icon_bag_alt"></i
+                    ></a>
                   </li>
                   <li class="quick-view">
                     <router-link :to="'/product/' + itemProduct.slug"
@@ -70,9 +78,30 @@ export default {
   data() {
     return {
       products: [],
+      keranjangUser: [],
     };
   },
+  methods: {
+    saveKeranjang(idProduct, nameProduct, priceProduct, photoProduct) {
+      var productStored = {
+        id: idProduct,
+        name: nameProduct,
+        price: priceProduct,
+        photo: photoProduct,
+      };
+      this.keranjangUser.push(productStored);
+      const parsed = JSON.stringify(this.keranjangUser);
+      localStorage.setItem("keranjangUser", parsed);
+    },
+  },
   mounted() {
+    if (localStorage.getItem("keranjangUser")) {
+      try {
+        this.keranjangUser = JSON.parse(localStorage.getItem("keranjangUser"));
+      } catch (e) {
+        localStorage.removeItem("keranjangUser");
+      }
+    }
     axios
       .get("http://shayna-backend.test/api/products")
       .then((res) => (this.products = res.data.data.data))
@@ -85,5 +114,11 @@ export default {
 <style scoped>
 .product-item {
   margin-right: 25px;
+}
+
+.pi-pic img {
+  height: 550px;
+  width: 360px;
+  object-fit: cover;
 }
 </style>
