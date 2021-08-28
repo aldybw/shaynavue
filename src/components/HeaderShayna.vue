@@ -18,7 +18,7 @@
         <div class="row">
           <div class="col-lg-2 col-md-2">
             <div class="logo">
-              <a href="./index.html">
+              <a href="#">
                 <img src="img/logo_website_shayna.png" alt="" />
               </a>
             </div>
@@ -54,7 +54,7 @@
                             </div>
                           </td>
                           <td
-                            @click="removeItem(keranjangUser.index)"
+                            @click="removeItem(keranjang.id)"
                             class="si-close"
                           >
                             <i class="ti-close"></i>
@@ -70,10 +70,14 @@
                   </div>
                   <div class="select-total">
                     <span>total:</span>
-                    <h5>$120.00</h5>
+                    <h5>${{ totalHarga }}.00</h5>
                   </div>
                   <div class="select-button">
-                    <a href="#" class="primary-btn view-card">VIEW CARD</a>
+                    <a href="#" class="primary-btn view-card">
+                      <router-link to="/cart" style="color: #fff;">
+                        VIEW CART
+                      </router-link>
+                    </a>
                     <a href="#" class="primary-btn checkout-btn">CHECK OUT</a>
                   </div>
                 </div>
@@ -96,10 +100,19 @@ export default {
     };
   },
   methods: {
-    removeItem(index) {
+    removeItem(idx) {
+      let keranjangUserStorage = JSON.parse(
+        localStorage.getItem("keranjangUser")
+      );
+      let itemKeranjangUserStorage = keranjangUserStorage.map(
+        (itemKeranjangUserStorage) => itemKeranjangUserStorage.id
+      );
+      let index = itemKeranjangUserStorage.findIndex((id) => id == idx);
       this.keranjangUser.splice(index, 1);
+
       const parsed = JSON.stringify(this.keranjangUser);
       localStorage.setItem("keranjangUser", parsed);
+      window.location.reload();
     },
   },
   mounted() {
@@ -110,6 +123,13 @@ export default {
         localStorage.removeItem("keranjangUser");
       }
     }
+  },
+  computed: {
+    totalHarga: function() {
+      return this.keranjangUser.reduce(function(items, data) {
+        return items + data.price;
+      }, 0);
+    },
   },
 };
 </script>
